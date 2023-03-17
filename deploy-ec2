@@ -1,0 +1,21 @@
+#This deploys ec2 instance with userdata option
+provider "aws"{
+    region ="us-east-2"
+}
+
+resource "aws_instance" "ansible" {
+    ami = "ami-00eeedc4036573771"
+    instance_type = "t2.micro"
+    tags = {
+        "Name" = "ansible"
+    user_data = <<EOF
+    sudo hostnamectl set-hostname ansible
+    sudo adduser ansible
+    echo "ansible ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/ansible
+    sudo su - ansible
+    sudo apt-add-repository ppa:ansible/ansible
+    sudo apt install ansible -y
+
+    EOF
+    }
+}
